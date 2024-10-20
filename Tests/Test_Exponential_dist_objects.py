@@ -1,4 +1,4 @@
-from estats.tests.Exponentialdistobject import ExponentialDistribution
+from estats.estats.distributions.Exponentialdistobject import ExponentialDistribution
 
 # Initialize an ExponentialDistribution object with λ = [1, 2, 3]
 exp_dist = ExponentialDistribution([1, 2, 3])
