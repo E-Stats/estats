@@ -1,6 +1,3 @@
-import sys
-sys.path.insert(0, "/home/mohamed/estats")
-
 from estats.tests.Normaldistobject import NormalDistribution
 import numpy as np 
 
