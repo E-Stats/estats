@@ -4,12 +4,12 @@ from scipy.spatial import distance_matrix
 def double_center_matrix(m: np.array) -> np.array:
     """
     Given a matrix m, returns the doubly centered matrix k, such that,
-    k_ij = k - mean(the ith column of k) - mean(the jth column of k) + total mean.
+    k_ij = m - mean(the ith row of m) - mean(the jth column of m) + total mean.
 
     """
     row_means = np.mean(m, 1)
     column_means = np.mean(m, 0)
-    total_mean = np.mean(m)
+    total_mean = np.mean(row_means)
     
     return m - row_means - column_means + total_mean
 
@@ -40,3 +40,5 @@ def dcor(x: np.array, y: np.array) -> np.float64:
         return 0
     
     return dcov(x, y) / np.sqrt(var_x * var_y)
+
+

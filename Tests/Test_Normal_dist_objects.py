@@ -1,4 +1,4 @@
-from estats.tests.Normaldistobject import NormalDistribution
+from estats.estats.distributions.Normaldistobject import NormalDistribution
 import numpy as np 
 
 if __name__ == "__main__":
