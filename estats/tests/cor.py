@@ -7,10 +7,9 @@ def double_center_matrix(m: np.array) -> np.array:
     k_ij = m - mean(the ith row of m) - mean(the jth column of m) + total mean.
 
     """
-    row_means = np.mean(m, 1)
-    column_means = np.mean(m, 0)
+    row_means = np.mean(m, 1, keepdims=True)
+    column_means = np.mean(m, 0, keepdims=True)
     total_mean = np.mean(row_means)
-    
     return m - row_means - column_means + total_mean
 
 
@@ -18,8 +17,10 @@ def dcov(x: np.array, y : np.array) -> np.float64:
     """
     Returns the distance covariance, which is an always positive number representing the degree of dependency of two random variables. 
     """
-    x = np.expand_dims(x, 1)
-    y = np.expand_dims(y, 1)
+    if np.ndim(x) == 1:
+        x = np.expand_dims(x, 1)
+    if np.ndim(y) == 1:    
+        y = np.expand_dims(y, 1)
 
     a = distance_matrix(x, x)
     b = distance_matrix(y, y)
