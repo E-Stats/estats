@@ -34,7 +34,7 @@ def m_normality_statistic(x: np.array) -> np.float64:
 
     
 
-def normality_etest(x: np.array, iterations: int = 1000, statistic = normality_statistic) -> dict:
+def normality_etest(x: np.array, iterations: int = 1000) -> dict:
     """
     Given a data matrix x which is n * m, tests whether the  m random variable are normal and returns the test statistic and p-value in a dictionary
     """
@@ -50,3 +50,4 @@ def normality_etest(x: np.array, iterations: int = 1000, statistic = normality_s
 
     p_value = np.mean(simulations > observed_statistic) 
     return {'observed_statistic': observed_statistic, 'p_value': p_value}
+
