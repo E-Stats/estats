@@ -145,7 +145,3 @@ def rank_sort(x):
     r[sorted_indices] = np.arange(len(x))
 
     return {'sorted': x_sorted, 'sorted_indices': sorted_indices, 'ranks': r}
-
-
-
-
