@@ -1,6 +1,4 @@
-from numba import njit, float64, int64, int32
-from numba.experimental import jitclass
-from numba.typed import List
+from numba import njit
 import numpy as np
 import math
 

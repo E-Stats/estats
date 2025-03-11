@@ -1,6 +1,8 @@
 import numpy as np
 from scipy.spatial import distance_matrix
 from btree import btree_sum
+import pandas as pd
+from scipy.special import gamma
 
 def double_center_matrix(m: np.array) -> np.array:
     """
@@ -46,9 +48,53 @@ def dcor(x: np.array, y: np.array) -> np.float64:
 
 
 def fast_dcor(x, y):
-    variances = fast_dcov(x, y)
-    dcor = variances['dcov'] / np.sqrt(variances['dvar_x'] * variances['dvar_y'])
-    return dcor
+
+    if x.ndim > 1 or y.ndim > 1:
+        if np.ndim(x) == 1:
+            x = np.expand_dims(x, 1)
+        if np.ndim(y) == 1:    
+            y = np.expand_dims(y, 1)
+            
+        variance_x = multi_fast_dcov(x, x)
+        variance_y = multi_fast_dcov(y, y)
+        dcov_x_y = multi_fast_dcov(x, y)
+
+        return dcov_x_y / np.sqrt(variance_x * variance_y)
+    
+    else:
+        variances = fast_dcov(x, y)
+        dcor = variances['dcov'] / np.sqrt(variances['dvar_x'] * variances['dvar_y'])
+        return dcor
+
+def multi_fast_dcov(x, y):
+
+    if isinstance(x, pd.DataFrame):
+        x = x.to_numpy()
+    
+    if isinstance(y, pd.DataFrame):
+        y = y.to_numpy()
+    
+    p = x.shape[1]
+    q = y.shape[1]
+    k = 6*p*q
+
+    R = np.random.randn(k, p)
+    R /= np.linalg.norm(R, axis=1, keepdims=True)
+    Q = np.random.randn(k, q)
+    Q /= np.linalg.norm(Q, axis=1, keepdims=True)
+
+    P_x = x @ R.T
+    P_y = y @ Q.T
+
+    u = np.zeros(k)
+
+    for i in range(0, k):
+        u[i] = fast_dcov(P_x[:, i], P_y[:, i])['dcov']
+
+    C_p = np.sqrt(np.pi) * np.exp(np.log(gamma((p+1) / 2)) - np.log(gamma(p / 2)))
+    C_q = np.sqrt(np.pi) * np.exp(np.log(gamma((q+1) / 2)) - np.log(gamma(q / 2)))
+
+    return C_p * C_q * np.mean(u)
 
 
 
@@ -109,6 +155,7 @@ def dcov_sums(x: np.array, y: np.array) -> np.float64:
     }
     
     return l
+
 def partial_sum(x: np.array, y: np.array, z: np.array, sr_x, sr_y):
     rank_x = sr_x['ranks']
     order_y = sr_y['sorted_indices']
@@ -145,3 +192,4 @@ def rank_sort(x):
     r[sorted_indices] = np.arange(len(x))
 
     return {'sorted': x_sorted, 'sorted_indices': sorted_indices, 'ranks': r}
+
