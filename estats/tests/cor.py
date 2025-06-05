@@ -65,6 +65,16 @@ def fast_dcor(x, y):
         variances = fast_dcov(x, y)
         dcor = variances['dcov'] / np.sqrt(variances['dvar_x'] * variances['dvar_y'])
         return dcor
+    
+def random_sphere(n, d):
+    """
+    Generates n random unit vectors, based on Rizzo 2019, section 3.6.4
+    """
+    M = np.random.normal(size=(n, d))
+    L = np.sqrt(np.sum(M * M, axis=1))  
+    U = (M.T / L).T
+    return U
+
 
 def multi_fast_dcov(x, y):
 
@@ -78,10 +88,8 @@ def multi_fast_dcov(x, y):
     q = y.shape[1]
     k = 6*p*q
 
-    R = np.random.randn(k, p)
-    R /= np.linalg.norm(R, axis=1, keepdims=True)
-    Q = np.random.randn(k, q)
-    Q /= np.linalg.norm(Q, axis=1, keepdims=True)
+    R = random_sphere(k, p)
+    Q = random_sphere(k, q)
 
     P_x = x @ R.T
     P_y = y @ Q.T
@@ -94,8 +102,7 @@ def multi_fast_dcov(x, y):
     C_p = np.sqrt(np.pi) * np.exp(np.log(gamma((p+1) / 2)) - np.log(gamma(p / 2)))
     C_q = np.sqrt(np.pi) * np.exp(np.log(gamma((q+1) / 2)) - np.log(gamma(q / 2)))
 
-    return C_p * C_q * np.mean(u)
-
+    return np.sqrt(C_p * C_q) * np.mean(u)
 
 
 def fast_dcov(x, y):
