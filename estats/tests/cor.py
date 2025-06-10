@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.spatial import distance_matrix
-from btree import btree_sum
+from .btree import btree_sum
 import pandas as pd
 from scipy.special import gamma
 
@@ -46,6 +46,22 @@ def dcor(x: np.array, y: np.array) -> np.float64:
     
     return dcov(x, y) / np.sqrt(var_x * var_y)
 
+def _dcov_grad_x_vec(x, Y):
+    eps = 1e-8
+    if x.ndim==1: x=x.ravel()
+    if Y.ndim==1: Y=Y[:,None]
+    n,q = Y.shape
+    A = np.abs(x[:,None]-x[None,:])
+    B = np.linalg.norm(Y[:,None,:]-Y[None,:,:],axis=2)
+    H = np.eye(n)-np.ones((n,n))/n
+    Ac,Bc = H@A@H, H@B@H
+    g = np.sqrt((Ac*Bc).mean())+eps
+    E = np.sign(x[:,None]-x[None,:])
+    gx = (E*Bc).sum(1)/(n*n*g)
+    diff = Y[:,None,:]-Y[None,:,:]
+    R = diff/(np.linalg.norm(diff,axis=2,keepdims=True)+eps)
+    gY=(Ac[:,:,None]*R).sum(1)/(n*n*g)
+    return gx,gY
 
 def fast_dcor(x, y):
 
