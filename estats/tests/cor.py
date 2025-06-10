@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.spatial import distance_matrix
-from btree import btree_sum
+from .btree import btree_sum
 import pandas as pd
 from scipy.special import gamma
 
@@ -46,6 +46,22 @@ def dcor(x: np.array, y: np.array) -> np.float64:
     
     return dcov(x, y) / np.sqrt(var_x * var_y)
 
+def _dcov_grad_x_vec(x, Y):
+    eps = 1e-8
+    if x.ndim==1: x=x.ravel()
+    if Y.ndim==1: Y=Y[:,None]
+    n,q = Y.shape
+    A = np.abs(x[:,None]-x[None,:])
+    B = np.linalg.norm(Y[:,None,:]-Y[None,:,:],axis=2)
+    H = np.eye(n)-np.ones((n,n))/n
+    Ac,Bc = H@A@H, H@B@H
+    g = np.sqrt((Ac*Bc).mean())+eps
+    E = np.sign(x[:,None]-x[None,:])
+    gx = (E*Bc).sum(1)/(n*n*g)
+    diff = Y[:,None,:]-Y[None,:,:]
+    R = diff/(np.linalg.norm(diff,axis=2,keepdims=True)+eps)
+    gY=(Ac[:,:,None]*R).sum(1)/(n*n*g)
+    return gx,gY
 
 def fast_dcor(x, y):
 
@@ -65,6 +81,16 @@ def fast_dcor(x, y):
         variances = fast_dcov(x, y)
         dcor = variances['dcov'] / np.sqrt(variances['dvar_x'] * variances['dvar_y'])
         return dcor
+    
+def random_sphere(n, d):
+    """
+    Generates n random unit vectors, based on Rizzo 2019, section 3.6.4
+    """
+    M = np.random.normal(size=(n, d))
+    L = np.sqrt(np.sum(M * M, axis=1))  
+    U = (M.T / L).T
+    return U
+
 
 def multi_fast_dcov(x, y):
 
@@ -78,10 +104,8 @@ def multi_fast_dcov(x, y):
     q = y.shape[1]
     k = 6*p*q
 
-    R = np.random.randn(k, p)
-    R /= np.linalg.norm(R, axis=1, keepdims=True)
-    Q = np.random.randn(k, q)
-    Q /= np.linalg.norm(Q, axis=1, keepdims=True)
+    R = random_sphere(k, p)
+    Q = random_sphere(k, q)
 
     P_x = x @ R.T
     P_y = y @ Q.T
@@ -94,8 +118,7 @@ def multi_fast_dcov(x, y):
     C_p = np.sqrt(np.pi) * np.exp(np.log(gamma((p+1) / 2)) - np.log(gamma(p / 2)))
     C_q = np.sqrt(np.pi) * np.exp(np.log(gamma((q+1) / 2)) - np.log(gamma(q / 2)))
 
-    return C_p * C_q * np.mean(u)
-
+    return np.sqrt(C_p * C_q) * np.mean(u)
 
 
 def fast_dcov(x, y):
