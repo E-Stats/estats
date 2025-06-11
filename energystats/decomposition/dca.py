@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from estats.tests.cor import fast_dcov
+from energystats.tests.cor import fast_dcov
 from scipy.optimize import minimize
 
 def constraint(u):

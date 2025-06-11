@@ -1,8 +1,7 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from scipy import stats
-from estats.tests.cor import dcor
+from energystats.tests.cor import dcor
 
 
 def find_outliers(data, target, threshold = 3, row_names = None,):
