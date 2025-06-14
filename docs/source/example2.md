@@ -1,33 +1,42 @@
-# Applying the two-sample distribution test
+# Outlier Detection 
 
-Let us start by applying the two-sample distribution energy test on the Iris dataset.
+We will now apply a more advanced example, outlier detection on the UScrime dataset
 
-Each observation has four features, so $f_i \in \mathbb{R}^4$.
+We will use the method of Szekely and Rizzo[2023] to detect influential observations.
 
-We compare Setosa and Versicolor:
-
-$
-H_0 : F_s = F_v , 
-H_1 : F_s \neq F_v
-$
-
-where $F_s$ and $F_v$ are the CDFs of Setosa and Versicolor, respectively.
+First, run this code
 
 ```{code-block} python
 :linenos:
-
-from energystats.tests.Two_sample_test import two_sample_energy_test
-from sklearn.datasets import load_iris
 import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+from statsmodels.datasets import get_rdataset
+from energystats.eda.outlier_detection import find_outliers
 
-iris = load_iris()
-X, y = iris.data, iris.target
-
-setosa = X[y == 0]
-versicolor = X[y == 1]
-
-stat, p_value = two_sample_energy_test(setosa, versicolor)
-print(f"Setosa vs Versicolor: T = {stat}, p-value = {p_value}")
+df = get_rdataset('Freedman', 'carData').data.dropna()
+X = df[['population', 'nonwhite', 'density']].reset_index(drop=True)
+y = df['crime'].reset_index(drop=True)
+res = find_outliers(X, y, threshold=3, row_names=df.index)
+rep = res['dcor_replicates']
+mu, _ = stats.norm.fit(rep['replicates'])
+residuals = rep['replicates'] - mu
+out = rep.index.isin(res['outliers'].index)
 ```
-The output should be - to no one's surprise- something like 
-```Setosa vs Versicolor: T = 207.474, p-value = 0.0```
+To obtain the dcor values after removing each sample element, this should follow a normal distribution.
+Now 
+```{code-block} python
+:linenos:
+
+plt.scatter(np.arange(len(residuals))[~out], residuals[~out], c='b')
+plt.scatter(np.arange(len(residuals))[out], residuals[out], c='r')
+plt.axhline(0, ls='--', color='k')
+plt.xlabel('Observation')
+plt.ylabel('Residual')
+plt.show()
+```
+
+Should plot the residuals which have a normal distribution, the output should be something like:
+![Residual plot](_static/outliers.png)
+
+The observations beyond `threshold = 3` standard deviations away should be marked as outliers.
