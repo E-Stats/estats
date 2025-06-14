@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from estats.tests.disco_decomposition import disco_decomposition
+from energystats.tests.disco_decomposition import disco_decomposition
 
 class TestDiscoDecomposition(unittest.TestCase):
 

@@ -3,7 +3,6 @@ from scipy.spatial.distance import pdist, squareform
 import matplotlib.pyplot as plt
 
 
-# Helper Functions
 def compute_distance_matrix(data, metric='euclidean'):
     """Compute the pairwise distance matrix."""
     pairwise_dist = pdist(data, metric=metric)

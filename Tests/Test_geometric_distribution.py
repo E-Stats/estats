@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.stats import geom
-from estats.tests.Geometric_tests import (
+from energystats.tests.Geometric_tests import (
     geometric_expected_distance,
     expected_pairwise_distance,
     geometric_energy_test,

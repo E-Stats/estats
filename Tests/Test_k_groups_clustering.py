@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import matplotlib.pyplot as plt
-from estats.k_groups_clustering import KGroupsClustering
+from energystats.clustering.k_groups_clustering import KGroupsClustering
 from sklearn.cluster import KMeans
 
 class TestKGroupsClustering(unittest.TestCase):
