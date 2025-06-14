@@ -1,5 +1,5 @@
 import unittest
-from estats.tests.Bernoulli_test import energy_goodness_of_fit_bernoulli
+from energystats.tests.Bernoulli_test import energy_goodness_of_fit_bernoulli
 import numpy as np 
 
 class TestBernoulliGoodnessOfFit(unittest.TestCase):

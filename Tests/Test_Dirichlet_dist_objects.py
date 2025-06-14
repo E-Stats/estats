@@ -1,4 +1,4 @@
-from estats.tests.Dirichletdistobject import DirichletDistribution
+from energystats.tests.Dirichletdistobject import DirichletDistribution
 import numpy as np
 
 # Initialize a Dirichlet distribution with concentration parameters [2, 3, 4]

@@ -1,5 +1,5 @@
 import numpy as np
-from estats.tests.Two_sample_test import two_sample_energy_test
+from energystats.tests.Two_sample_test import two_sample_energy_test
 
 def test_two_sample_test():
     # Generate two similar samples

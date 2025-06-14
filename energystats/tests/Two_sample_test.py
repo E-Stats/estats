@@ -14,7 +14,6 @@ def energy_distance(x, y):
     B = np.sum([np.abs(xi - xj) for xi in x for xj in x]) / (n ** 2)
     C = np.sum([np.abs(yi - yj) for yi in y for yj in y]) / (m ** 2)
     
-    # Calculate and return the energy distance statistic
     return 2 * A - B - C
 
 def two_sample_energy_test(x, y, R = 1000):
@@ -32,7 +31,6 @@ def two_sample_energy_test(x, y, R = 1000):
     combined = np.concatenate([x, y])
     observed_stat = (n * m / (n + m)) * energy_distance(x, y)
 
-    # Permutation test
     permuted_stats = []
     for _ in range(R):
         np.random.shuffle(combined)

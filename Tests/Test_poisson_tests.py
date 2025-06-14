@@ -1,5 +1,5 @@
 import numpy as np
-from estats.tests.poisson_tests import poisson_e_test, poisson_m_test
+from energystats.tests.poisson_tests import poisson_e_test, poisson_m_test
 
 def test_poisson_tests():
     # Case 1: Standard case with correct Poisson distribution and moderate lambda

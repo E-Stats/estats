@@ -1,5 +1,5 @@
 import numpy as np
-from estats.tests.distribution_tests import m_normality_statistic
+from energystats.tests.distribution_tests import m_normality_statistic
 
 def test_mvnorm_statistic():
     test_cases = [
